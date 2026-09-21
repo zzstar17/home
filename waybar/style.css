@@ -1,0 +1,94 @@
+* {
+    border: none;
+    border-radius: 0;
+    font-family: Source Code Pro;
+    font-size: 13px;
+    min-height: 0;
+}
+
+@import "gruvbox.css";
+
+window#waybar {
+    background: rgba(0, 0, 0, 1);
+    color: @white_b;
+}
+
+#workspaces button {
+    padding: 0 5px;
+    background: transparent;
+    color: @white_b;
+    border-top: 3px solid transparent;
+    border-bottom: 3px solid transparent;
+}
+
+#workspaces button.focused {
+    background: #1a1b26;
+    border-bottom: 3px solid @blue;
+}
+
+#window {
+  margin-top: 5px;
+  margin-bottom: 1px;
+  margin-left: 20px;
+}
+
+#clock, #disk, #privacy, #network {
+  margin-right: 10px;
+}
+
+#network {
+  margin-left: 20px;
+}
+
+#mode {
+    background: @red;
+    border-bottom: 3px solid @white_b;
+}
+
+#battery {
+    background-color: @white_b;
+    color: @background;
+}
+
+#battery.charging {
+    color: @background;
+    background-color: @green;
+}
+
+@keyframes blink {
+    to {
+        background-color: @white_b;
+        color: @background;
+    }
+}
+
+.module {
+  margin-top: 5px;
+  margin-bottom: -1px;
+  padding: 0 4px;
+}
+
+.module:hover {
+  background-color: #1a1b26;
+}
+
+/* for some reason not included in .module */
+#privacy {
+  margin-top: 5px;
+  margin-bottom: -2px;
+  padding: 0 4px;
+}
+
+#privacy:hover {
+  background-color: #1a1b26;
+}
+
+#battery.warning:not(.charging) {
+    background: @red;
+    color: @white_b;
+    animation-name: blink;
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}

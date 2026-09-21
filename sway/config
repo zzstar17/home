@@ -2,7 +2,28 @@
 #
 # Please see https://i3wm.org/docs/userguide.html for a complete reference!
 
+# windows key
 set $mod Mod4
+
+######## input
+
+input type:keyboard {
+  # xkb_options caps:none
+  # xkb_options caps:swapescape
+  xkb_layout us,pt
+  # xkb_options grp:win_space_toggle
+}
+
+input type:touchpad {
+  tap enabled
+  accel_profile "flat" # "flat" to disable mouse acceleration (enabled by default; to set it manually, use "adaptive" instead of "flat")
+  pointer_accel 0.7 # set mouse sensitivity (between -1 and 1)
+}
+
+output "AOC 27B2 0x0000E0A3" allow_tearing yes
+output "AOC 27B2 0x0000E0A3" max_render_time off
+
+###### input end
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
@@ -28,6 +49,24 @@ exec --no-startup-id dex --autostart --environment i3
 # and nm-applet is a desktop environment-independent system tray GUI for it.
 #exec --no-startup-id nm-applet
 
+# -------------------------
+# startup stuff
+# -------------------------
+
+# waybar
+exec waybar
+
+# notifications
+exec --no-startup-id mako
+
+# terminal / desktop app opener
+bindsym $mod+x exec --no-startup-id fuzzel
+
+# input method (japanese)
+exec --no-startup-id fcitx5
+
+# useless discord music display thingy
+exec --no-startup-id musicpresence
 
 # -------------------------
 # System independent options
@@ -41,9 +80,6 @@ bindsym $mod+Return exec alacritty
 
 # kill focused window
 bindsym $mod+Shift+q kill
-
-# terminal / desktop app opener
-bindsym $mod+x exec --no-startup-id fuzzel
 
 # change focus
 bindsym $mod+h focus left
@@ -135,6 +171,15 @@ bindsym $mod+Shift+8 move container to workspace number $ws8
 bindsym $mod+Shift+9 move container to workspace number $ws9
 bindsym $mod+Shift+0 move container to workspace number $ws10
 
+# Scratchpad:
+# Sway has a "scratchpad", which is a bag of holding for windows.
+# You can send windows there and get them back later.
+# Move the currently focused window to the scratchpad
+bindsym $mod+Shift+minus move scratchpad
+# Show the next scratchpad window or hide the focused scratchpad window.
+# If there are multiple scratchpad windows, this command cycles through them.
+bindsym $mod+minus scratchpad show
+
 # reload the configuration file
 bindsym $mod+Shift+c reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
@@ -172,14 +217,14 @@ mode "resize" {
 
 bindsym $mod+r mode "resize"
 
+# i3status
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
-bar {
-    status_command i3status
-    mode hide
-    position top
-}
-
+# bar {
+#     status_command i3status
+#     # mode hide
+#     position bottom
+# }
 
 # --------------------
 # Sound
@@ -206,44 +251,35 @@ bindsym $mod+XF86AudioMute exec --no-startup-id $mute_volume
 bindsym XF86AudioMicMute exec --no-startup-id $mute_mic
 bindsym $mod+XF86AudioMicMute exec --no-startup-id $mute_mic
 
-# import wayland variables
-exec systemctl --user import-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP SWAYSOCK I3SOCK XCURSOR_SIZE XCURSOR_THEME
-exec dbus-update-activation-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP SWAYSOCK I3SOCK XCURSOR_SIZE XCURSOR_THEME
-
-# --------------------
-# Input (System dependent)
-# --------------------
-
-input "2:14:ETPS/2_Elantech_Touchpad" {
-  tap enabled
-  accel_profile "flat" # "flat" to disable mouse acceleration (enabled by default; to set it manually, use "adaptive" instead of "flat")
-  pointer_accel 0.7 # set mouse sensitivity (between -1 and 1)
-}
-
-input * {
-  xkb_options caps:swapescape
-  xkb_layout us,pt
-  xkb_options grp:alts_toggle
-}
-
 # Brightness
-bindsym XF86MonBrightnessDown exec sudo xbacklight -dec 5
-bindsym XF86MonBrightnessUp exec sudo xbacklight -inc 5
+bindsym XF86MonBrightnessDown exec exec brightnessctl set 5%-
+bindsym XF86MonBrightnessUp exec exec brightnessctl set 5%+
 
 # wallpaper daemon
-exec --no-startup-id swww-daemon
+exec --no-startup-id awww-daemon --format xrgb
 # try to set previous background image
-exec swww img $(cat $HOME/cur_background_image)
+exec awww img $(cat $HOME/cur_background_image)
 # execute change background script with notifications and img saving
 bindsym $mod+Shift+b exec --no-startup-id sh ~/scripts/change_background.sh
 
 # Screenshot
+# GRIM AND SLURP
 # just select and copy
-bindsym Print exec grim -g "$(slurp)" - | wl-copy
+# bindsym Print exec grim -g "$(slurp)" - | wl-copy
 # fast print and save
-bindsym Shift+Print exec grim $(xdg-user-dir)/captures/$(date "+%Y-%m-%d_%H-%M-%S").png
+# bindsym Shift+Print exec grim $(xdg-user-dir)/captures/$(date "+%Y-%m-%d_%H-%M-%S").png
 # select, print and open editor
-bindsym Ctrl+Print exec grim -g "$(slurp)" - | swappy -f -
+# bindsym Ctrl+Print exec grim -g "$(slurp)" - | swappy -f -
+
+# screenshot
+# FLAMESHOT
+# this is quite buggy (specially on multiple monitors) but I guess it works
+# https://github.com/flameshot-org/flameshot/blob/master/docs/Sway%20and%20wlroots%20support.md
+# some packages have to be installed for this to work
+for_window [app_id="flameshot"] border pixel 0, floating enable, fullscreen disable, move absolute position 0 0
+bindsym Shift+Print exec flameshot screen --path ~/Captures --clipboard
+bindsym Print exec flameshot gui
+bindsym $mod+Shift+s exec flameshot gui
 
 # Screen lock
 # exec --no-startup-id exec xss-lock -l ~/scripts/transfer-sleep-lock-i3lock.sh
@@ -251,9 +287,10 @@ bindsym Ctrl+Print exec grim -g "$(slurp)" - | swappy -f -
 # Power mode
 bindsym $mod+Shift+m exec swaylock
 mode "power" {
-	bindsym Shift+s exec shutdown now
-	bindsym r exec reboot
+  bindsym Shift+s exec shutdown now
+  bindsym r exec reboot
   bindsym s exec swaylock & systemctl suspend
+  bindsym l exec swaylock
 
   bindsym Return mode "default"
   bindsym Escape mode "default"
@@ -262,7 +299,7 @@ mode "power" {
 bindsym $mod+Shift+comma mode "power"
 
 mode "frequency"  {
-	bindsym 1 exec sudo cpupower frequency-set -g powersave && $refresh_i3status 
+	bindsym 1 exec sudo cpupower frequency-set -g powersave && $refresh_i3status
 	bindsym 2 exec sudo cpupower frequency-set -g ondemand && $refresh_i3status
 	bindsym 3 exec sudo cpupower frequency-set -g performance && $refresh_i3status
 
@@ -272,21 +309,20 @@ mode "frequency"  {
 }
 bindsym $mod+Shift+period mode "frequency"
 
-# notifications
-exec --no-startup-id mako
+#####################
+# Variables and stuff
+#####################
 
-# device specific
-# enable / disable touchpad click
-bindsym $mod+comma exec sh $HOME/scripts/enable_disable_touchpad.sh
+# gtk theme
+# honestly this doesn't seem to work most of the time
+set $gnome-schema org.gnome.desktop.interface
+exec_always {
+    gsettings set $gnome-schema gtk-theme 'Tokyonight-Dark'
+}
 
-# battery
-# exec --no-startup-id watch -n 30 sh ~/scripts/notify-battery.sh
+exec systemctl --user set-environment GTK_IM_MODULE=fcitx
+exec systemctl --user set-environment QT_IM_MODULE=fcitx
+exec systemctl --user set-environment XMODIFIERS=@im=fcitx
 
-# enhancer script commands
-exec --no-startup-id ~/scripts/i3enhancer
-bindsym $mod+Tab exec enhanced workspace tab
-bindsym Super_L exec enhanced super
-bindsym $mod+Ctrl+Right exec enhanced workspace next
-bindsym $mod+Ctrl+Left exec enhanced workspace previous
-bindsym $mod+Ctrl+l exec enhanced workspace next
-bindsym $mod+Ctrl+h exec enhanced workspace previous
+# sway environment / dbus configs
+include /etc/sway/config.d/*

@@ -1,4 +1,3 @@
-
 [Default Applications]
 x-scheme-handler/http=librewolf.desktop
 x-scheme-handler/https=librewolf.desktop
@@ -57,7 +56,7 @@ audio/aac=vlc.desktop
 audio/mp2=vlc.desktop
 audio/x-ms-asx=vlc.desktop
 audio/vnd.wave=vlc.desktop
-audio/x-mod=vlc.desktop
+audio/x-mod=org.gnome.gedit.desktop
 audio/x-mpegurl=vlc.desktop
 audio/x-speex=vlc.desktop
 audio/x-aiff=vlc.desktop
@@ -120,3 +119,18 @@ application/x-pocket-word=libreoffice-writer.desktop
 application/vnd.ms-works=libreoffice-writer.desktop
 application/x-hwp=libreoffice-writer.desktop
 application/x-fictionbook+xml=libreoffice-writer.desktop
+application/pdf=atril.desktop
+image/jpeg=org.gnome.eog.desktop
+image/png=org.gnome.eog.desktop
+x-scheme-handler/discord=vesktop.desktop
+application/json=org.gnome.gedit.desktop
+application/xml=org.gnome.gedit.desktop
+
+[Added Associations]
+application/pdf=atril.desktop;
+image/jpeg=pinta.desktop;org.gnome.eog.desktop;
+image/png=com.github.PintaProject.Pinta.desktop;pinta.desktop;org.gnome.eog.desktop;
+audio/x-mod=org.gnome.gedit.desktop;
+application/json=org.gnome.gedit.desktop;
+application/xml=org.gnome.gedit.desktop;
+image/vnd.microsoft.icon=com.github.PintaProject.Pinta.desktop;

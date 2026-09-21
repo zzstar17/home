@@ -1,16 +1,24 @@
-
-HISTSIZE=10000
-HISTFILESIZE=20000
+HISTSIZE=1000
+HISTFILESIZE=2000
 
 # PS1='\u[\#]:\w$ '
 PS1='\[\e[32m\]\u[\#]\[\e[00m\]:\[\e[36m\]\w\[\e[00m\]$ '
+
+# ssh-agent
+# use touch $XDG_RUNTIME_DIR/ssh-agent.env when starting for the first time
+if ! pgrep -u "$USER" ssh-agent >/dev/null; then
+  echo "ssh agent started"
+  ssh-agent -t 1h >"$XDG_RUNTIME_DIR/ssh-agent.env"
+fi
+if [ ! -f "$SSH_AUTH_SOCK" ]; then
+  echo "ssh agent connected"
+  source "$XDG_RUNTIME_DIR/ssh-agent.env" >/dev/null
+fi
 
 # neovim
 alias vim=nvim
 export EDITOR=nvim
 
-#export TERM=vt100
-alias termvt="export TERM='vt100'"
 alias termx="export TERM='xterm'"
 alias termnormal="export TERM='term-256color'"
 alias termnone="unset TERM"
@@ -26,7 +34,7 @@ alias svim='sudo vim'
 alias reload='printf "\033c";source ~/.bashrc'
 
 alias ls='ls --color=auto'
-alias ll='ls -alF'
+alias ll='ls -alhF'
 alias la='ls -A'
 alias l='ls -CF'
 
@@ -47,11 +55,11 @@ alias settouchpad="xinput set-prop 11 272 1"
 export PATH=$PATH:$HOME/.local/bin
 export XDG_CONFIG_HOME=$HOME/.config
 
+# set default amd driver
+export AMD_VULKAN_ICD=RADV
+
 # neofetch
 fortune
 
 # -----
-# system dependent
 source /usr/share/nvm/init-nvm.sh
-
-export PATH=~/.cargo/bin:$PATH
